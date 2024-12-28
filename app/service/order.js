@@ -95,6 +95,20 @@ class OrderService extends Service {
 		
 	}
 
+	async SelectOrderByID(oID)
+	{
+		console.log(oID);
+		try
+		{
+			let rs = await this.app.mysql.select("order",{where:{orderId:oID}});
+			return rs;
+		}
+		catch(e)
+		{
+			console.log(e);
+			return false;
+		}
+	}
 }
 
 //3.导出类

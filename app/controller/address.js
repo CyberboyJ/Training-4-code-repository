@@ -1,16 +1,20 @@
 const { Controller } = require('egg');
 
-class AddressController extends Controller {
+const Parameter = require('parameter'); 
+const parameter = new Parameter();
+
+class AddressController extends Controller { // pass test 
   
     async getAddress(){
-        console.log(this.ctx.body);
+        // console.log("test get Address");
+        console.log(this.ctx.request.body);
 		const rule = {
 			tel: { type: 'string', required: true ,message:"请输入正确的手机号码"},
             default:{type:'string',required:true,message:"请输入正确的类型"}
 		};  
 		
 		//验证请求中参数
-		const validateErrors = parameter.validate(rule, this.ctx.body);
+		const validateErrors = parameter.validate(rule, this.ctx.request.body);
 		console.log(validateErrors)
 		
 		if(validateErrors){
@@ -21,7 +25,7 @@ class AddressController extends Controller {
         //     tel:
         //     default:
         // }
-        const rs=this.ctx.service.order.insertOrder(this.ctx.request.body.tel,this.ctx.request.body.default);
+        const rs= await this.ctx.service.address.selectAddressByTelAndDefault(this.ctx.request.body.tel,this.ctx.request.body.default);
         this.ctx.body=rs
         }
     }
