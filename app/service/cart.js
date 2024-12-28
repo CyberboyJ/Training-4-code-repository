@@ -76,7 +76,6 @@ class CartService extends Service {
         console.log(cart);
         try {
             rs = await this.app.mysql.update("cart", {
-            rs = await this.app.mysql.update("cart", {
                 quantity: cart.quantity
             }, {where:{telId: cart.tel, goodsId: cart.goodsId} });
         } catch (error) {
