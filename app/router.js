@@ -25,4 +25,8 @@ module.exports = app => {
 
   //adress
   router.get('/address', controller.address.getAddress);
+
+  //order
+  router.post('/createOrder',controller.order.creartOrder);
+  router.get('/orders/:gid',controller.order.QueryOrderById);
 };
