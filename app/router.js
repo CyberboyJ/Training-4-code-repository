@@ -26,6 +26,16 @@ module.exports = app => {
   //adress
   router.get('/address', controller.address.getAddress);
 
+  //cart
+  router.post('/cart/new',controller.cart.insertCart);
+  router.get('/cart/query/:tel',controller.cart.selectCartByTelId);
+  router.get('/cart/count/:tel',controller.cart.selectCartCountByTelId);
+  router.put('/cart/updateCart',controller.cart.updateQuantityCart);
+  router.put('/cart/check',controller.cart.updateCartState);
+  router.delete('/cart/delete',controller.cart.deleteCartByTelIdByGoodsId);
+  router.get('/cart/query',controller.cart.selectCartByTelldByGoodsld);
+
+
   //order
   router.post('/createOrder',controller.order.creartOrder);
   router.get('/orders/:gid',controller.order.QueryOrderById);

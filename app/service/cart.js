@@ -9,7 +9,7 @@ class CartService extends Service {
     async selectCartByTelldByGoodsld(tel, gid) {
         let rs;
         try {
-            rs = this.app.mysql.count("cart", { where: { telId: tel, goodsId: gid } });
+            rs = this.app.mysql.count("cart", { telId: tel, goodsId: gid  });
         }
         catch (error) {
             console.log(error);
@@ -19,34 +19,49 @@ class CartService extends Service {
 
     //插入新商品记录
     async newCartMessage(cart) {
+        console.log(cart);
         let rs;
         try {
-            let cartNo = this.createNo();
-            rs = this.app.mysql.insert("cart", {
-                cartId: cartNo,
-                goodsId: cart.goodsId,
-                telId: cart.telId,
-                quantity: cart.quantity,
-                state: 0
-            })
+            const flag = await this.app.mysql.select("cart",{where:{telId:cart.tel,goodsId:cart.goodsId}});
+            if(flag.length!=0)
+            {
+                console.log("here 2");
+                console.log(flag);
+                let newQuantity =flag[0].quantity+cart.quantity;
+                rs = await this.app.mysql.update("cart",{quantity:newQuantity},{where:{telId: cart.tel, goodsId: cart.goodsId}})
+                return rs.affectedRows > 0;
+            }else
+            {
+                let cartNo = await this.createNo();
+                rs =await this.app.mysql.insert("cart", {
+                    cartId: cartNo,
+                    goodsId: cart.goodsId,
+                    telId: cart.tel,
+                    quantity: cart.quantity,
+                    state: 0
+                })
+                console.log(rs);
+                return rs.affectedRows > 0;
+            }
         } catch (error) {
             console.log(error);
+            return false;
         }
-        return rs;
-
     }
 
     //更新商品数量
     async updateQuantityCartByTelIdBygid(cart) {
         let rs;
+        console.log("in the function "+ cart);
+        console.log(cart);
         try {
-            rs = this.app.mysql.update("cart", {
+            rs = await this.app.mysql.update("cart", {
                 quantity: cart.quantity
-            }, { where: { telId: cart.telId, goodsId: cart.goodsId } });
+            }, {where:{telId: cart.tel, goodsId: cart.goodsId} });
         } catch (error) {
             console.log(error);
         }
-        return rs;
+        return rs.affectedRows > 0;
     }
 
     //关联查询，商品信息
@@ -61,9 +76,10 @@ class CartService extends Service {
     }
 
     async QueryCountByTelId(tel) {
+        console.log("in the function" + tel);
         let rs;
         try {
-            rs = this.app.mysql.count("cart", { where: { telId: tel } });
+            rs = await this.app.mysql.count("cart", {telId:tel});
         } catch (error) {
             console.log(error);
         }
@@ -74,57 +90,34 @@ class CartService extends Service {
     async updateState(tel, gid) {
         let rs;
         try {
-            rs = this.app.mysql.update("cart", { state: 1 }, { where: { telId: tel, goodsId: gid } });
+            rs = await this.app.mysql.update("cart", { state: 1 }, { where: { telId: tel, goodsId: gid } });
         } catch (error) {
             console.log(error);
         }
-        return rs;
+        return rs.affectedRows > 0;
     }
 
     //删除
-    async deleteByGidByTelID(gid, tel) {
+    async deleteByGidByTelID(tel, gid) {
         let rs;
         try {
-            rs = this.app.mysql.delete("cart", { where: { telId: tel, goodsId: gid } });
+            rs = await this.app.mysql.delete("cart", {telId: tel, goodsId: gid });
         } catch (error) {
             console.log(error);
         }
-        return rs;
+        return rs.affectedRows > 0;
     }
 
     //生成订单编号
     async createNo() {
+        let id = 1;
         while (true) {
-            // 1、生成订单编号，并验证编号是否存在
-            let Id = () => {
-                {
-                    let now = new Date();
-                    let year = now.getFullYear();
-                    let month = now.getMonth() + 1;
-                    let day = now.getDate();
-                    month = month < 10 ? "0" + month : month;
-                    day = day < 10 ? "0" + day : day;
-
-                    let hours = now.getHours();
-                    let minutes = now.getMinutes();
-                    let seconds = now.getSeconds();
-                    let ms = now.getMilliseconds();
-                    hours = hours < 10 ? "0" + hours : hours;
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                    return `${year}${month}${day}${hours}${minutes}${seconds}${ms}`
-                }
-            }
-            const oId = Id()
-            const total = await this.app.mysql.count('cart', { cartId: oId });
+            const total = await this.app.mysql.count('cart', { cartId: id });
             if (total == 0)
-                return oId;
+                return id;
+            id = id + 1;
         }
-
-
     }
-
 }
 
 //3.导出类

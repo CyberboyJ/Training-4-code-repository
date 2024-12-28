@@ -7,8 +7,8 @@ const parameter = new Parameter();
 class CartController extends Controller {
 
 	//根据客户手机号码和商品编号查询购物车中是否已经存在此商品
-	async selectCartByTelldByGoodsld() {
-		console.log(this.ctx.request.body);
+	async selectCartByTelldByGoodsld() { //pass test
+		console.log(this.ctx.request.query);
 		const rule = {
 			tel: {
 				type: 'string',
@@ -26,21 +26,21 @@ class CartController extends Controller {
 		};
 
 		//验证请求中参数
-		const validateErrors = parameter.validate(rule, this.ctx.request.body);
+		const validateErrors = parameter.validate(rule, this.ctx.request.query);
 		console.log(validateErrors)
 
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
-			let params = this.ctx.request.body;
-			let rs = await this.ctx.service.cart.selectCartByTelldByGoodsld(params.tel, params.pwd);
+			let params = this.ctx.request.query;
+			let rs = await this.ctx.service.cart.selectCartByTelldByGoodsld(params.tel, params.goodsId);
 			this.ctx.body = rs;
 		}
 
 	}
 
 	//向购物车中插入一件商品
-	async insertCart() {
+	async insertCart() { //pass test
 		console.log(this.ctx.request.body);
 		const rule = {
 			tel: {
@@ -57,7 +57,7 @@ class CartController extends Controller {
 				message: "商品ID格式错误"
 			},
 			quantity: {
-				type: 'string',
+				type: 'number',
 				required: true,
 				message: "需要正确的数量",
 				validator: (rule, value, callback) => {
@@ -86,7 +86,7 @@ class CartController extends Controller {
 	}
 
 	//根据客户手机号码和商品编号更新购物车中某商品的数量
-	async updateQuantityCart() {
+	async updateQuantityCart() {//pass test
 		console.log(this.ctx.request.body);
 		const rule = {
 			tel: {
@@ -103,7 +103,7 @@ class CartController extends Controller {
 				message: "商品ID格式错误"
 			},
 			quantity: {
-				type: 'string',
+				type: 'int',
 				required: true,
 				message: "需要正确的数量",
 				validator: (rule, value, callback) => {
@@ -132,10 +132,11 @@ class CartController extends Controller {
 	}
 
 	//根据客户手机号码查询购物车信息
-	async selectCartByTelId() {
+	async selectCartByTelId() { // 多余方法
+		console.log("start");
 		console.log(this.ctx.params);
 		const rule = {
-			telId: { type: 'string', required: true, message: "请输入正确的手机号码" }
+			telId: { type: 'int', required: true, message: "请输入正确的手机号码" }
 		};
 
 		//验证请求中参数
@@ -145,14 +146,16 @@ class CartController extends Controller {
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
-			let params = this.ctx.params.telId;
+			let params = this.ctx.params.tel;
+			console.log("test2 "+params);
+			console.log("test");
 			let rs = await this.ctx.service.cart.QueryByTelId(params);
 			this.ctx.body = rs;
 		}
 	}
 
 	//根据客户手机号码查询购物车中有多少种商品
-	async selectCartCountByTelId() {
+	async selectCartCountByTelId() { // pass test
 		console.log(this.ctx.params);
 		const rule = {
 			tel: {
@@ -172,7 +175,7 @@ class CartController extends Controller {
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
-			let params = this.ctx.params.telId;
+			let params = this.ctx.params.tel;
 			let rs = await this.ctx.service.cart.QueryCountByTelId(params);
 			this.ctx.body = rs;
 		}
@@ -211,8 +214,8 @@ class CartController extends Controller {
 	}
 
 	//根据客户手机号码和商品编号删除购物车种某个商品
-	async deleteCartByTelIdByGoodsId() {
-		console.log(this.ctx.params);
+	async deleteCartByTelIdByGoodsId() { //pass test
+		console.log(this.ctx.query);
 		const rule = {
 			tel: {
 				type: 'string',
@@ -230,14 +233,14 @@ class CartController extends Controller {
 		};
 
 		//验证请求中参数
-		const validateErrors = parameter.validate(rule, this.ctx.params);
+		const validateErrors = parameter.validate(rule, this.ctx.query);
 		console.log(validateErrors)
 
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
-			let params = this.ctx.params;
-			let rs = await this.ctx.service.cart.deleteByGidByTelID(params.telId, params.goodsId);
+			let params = this.ctx.query;
+			let rs = await this.ctx.service.cart.deleteByGidByTelID(params.tel, params.goodsId);
 			this.ctx.body = rs;
 		}
 	}
