@@ -29,6 +29,6 @@ class AddressController extends Controller { // pass test
         this.ctx.body=rs
         }
     }
-    
+
 }
 module.exports = AddressController;
