@@ -1,31 +1,7 @@
-# example
-
-
-
-## QuickStart
-
-<!-- add docs here for user -->
-
-see [egg docs][egg] for more detail.
-
-### Development
-
-```bash
-npm i
-npm run dev
-open http://localhost:7001/
+# 实训4 代码管理 git仓库
+## 提交指令
 ```
-
-### Deploy
-
-```bash
-npm start
-npm stop
+git add . 
+git commmit -m "（提交的附言）"
+git push
 ```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-
-[egg]: https://eggjs.org
