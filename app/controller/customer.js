@@ -57,12 +57,12 @@ class CustomerController extends Controller {
 		} else {
 			let params = this.ctx.request.body;
 			let rs = await this.ctx.service.customer.addCustomer(params);
-
-			if (rs.success) {
-				this.ctx.body = { result: true, message: rs.message };
-			} else {
-				this.ctx.body = { result: false, message: rs.message };
-			}
+			this.ctx.body = rs;
+			// if (rs.success) {
+			// 	this.ctx.body = { result: true, message: rs.message };
+			// } else {
+			// 	this.ctx.body = { result: false, message: rs.message };
+			// }
 		}
 	}
 
@@ -104,14 +104,15 @@ class CustomerController extends Controller {
 		} else {
 			let params = this.ctx.request.body;
 			let rs = await this.ctx.service.customer.selectCustByTelAndPwd(params.tel, params.pwd);
+			this.ctx.body = rs;
 			// 如果登录成功
-			if (rs && rs.length > 0) {
-				// rs长度大于0表示查询到用户
-				this.ctx.body = { result: true, message: "登录成功", user: rs[0] };
-			} else {
-				// 登录失败
-				this.ctx.body = { result: false, message: "用户名或密码错误" };
-			}
+			// if (rs && rs.length > 0) {
+			// 	// rs长度大于0表示查询到用户
+			// 	this.ctx.body = { result: true, message: "登录成功", user: rs[0] };
+			// } else {
+			// 	// 登录失败
+			// 	this.ctx.body = { result: false, message: "用户名或密码错误" };
+			// }
 		}
 	}
 
