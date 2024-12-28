@@ -6,7 +6,8 @@ const Service = require('egg').Service;
 //CustomerService 此类处理 Customer对应的业务逻辑 和访问数据库的增删改查
 class CartService extends Service {
     //4.写自定义函数
-    async selectCartByTelldByGoodsld(tel, gid) {
+    //根据电话和商品编号查询商品是否存在
+    async findExistByTelldByGoodsld(tel, gid) {
         let rs;
         try {
             rs = this.app.mysql.count("cart", { where: { telId: tel, goodsId: gid } });
@@ -17,12 +18,31 @@ class CartService extends Service {
         return rs;
     }
 
+    // 根据电话和商品编号查询商品信息
+    async searchCartByTelldByGoodsld(tel, gid) {
+        let rs;
+        try {
+            // 使用 find 方法查询商品信息，而不是 count 方法
+            rs = this.app.mysql.select("cart", {
+                where: { telId: tel, goodsId: gid }, limit: 1 // 如果你只想获取一个商品对象
+            });
+
+            if (rs.length === 0) {
+                return null;
+            }
+            rs = rs[0]; // 如果有结果，取第一个对象
+        } catch (error) {
+            console.log(error);
+        }
+        return rs;
+    }
+
     //插入新商品记录
     async newCartMessage(cart) {
         let rs;
         try {
             let cartNo = this.createNo();
-            rs = this.app.mysql.insert("cart", {
+            rs = await this.app.mysql.insert("cart", {
                 cartId: cartNo,
                 goodsId: cart.goodsId,
                 telId: cart.telId,
@@ -40,7 +60,7 @@ class CartService extends Service {
     async updateQuantityCartByTelIdBygid(cart) {
         let rs;
         try {
-            rs = this.app.mysql.update("cart", {
+            rs = await this.app.mysql.update("cart", {
                 quantity: cart.quantity
             }, { where: { telId: cart.telId, goodsId: cart.goodsId } });
         } catch (error) {
@@ -53,7 +73,7 @@ class CartService extends Service {
     async QueryByTelId(tel) {
         let rs;
         try {
-            rs = this.app.mysql.select("cart", { where: { telId: tel } });
+            rs = await this.app.mysql.select("cart", { where: { telId: tel } });
         } catch (error) {
             console.log(error);
         }
@@ -63,7 +83,7 @@ class CartService extends Service {
     async QueryCountByTelId(tel) {
         let rs;
         try {
-            rs = this.app.mysql.count("cart", { where: { telId: tel } });
+            rs = await this.app.mysql.count("cart", { where: { telId: tel } });
         } catch (error) {
             console.log(error);
         }
@@ -71,10 +91,10 @@ class CartService extends Service {
     }
 
     //更新勾选状态
-    async updateState(tel, gid) {
+    async updateState(tel, gid, state) {
         let rs;
         try {
-            rs = this.app.mysql.update("cart", { state: 1 }, { where: { telId: tel, goodsId: gid } });
+            rs = await this.app.mysql.update("cart", { state: state }, { where: { telId: tel, goodsId: gid } });
         } catch (error) {
             console.log(error);
         }
@@ -85,7 +105,7 @@ class CartService extends Service {
     async deleteByGidByTelID(gid, tel) {
         let rs;
         try {
-            rs = this.app.mysql.delete("cart", { where: { telId: tel, goodsId: gid } });
+            rs = await this.app.mysql.delete("cart", { where: { telId: tel, goodsId: gid } });
         } catch (error) {
             console.log(error);
         }

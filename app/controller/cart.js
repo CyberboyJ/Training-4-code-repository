@@ -33,7 +33,7 @@ class CartController extends Controller {
 			this.ctx.body = validateErrors
 		} else {
 			let params = this.ctx.request.body;
-			let rs = await this.ctx.service.cart.selectCartByTelldByGoodsld(params.tel, params.pwd);
+			let rs = await this.ctx.service.cart.findExistByTelldByGoodsld(params.tel, params.pwd);
 			this.ctx.body = rs;
 		}
 
@@ -180,7 +180,7 @@ class CartController extends Controller {
 
 	//根据客户手机号码和商品编号更新购物车中某个商品是否被选中
 	async updateCartState() {
-		console.log(this.ctx.params);
+		console.log(this.ctx.body);
 		const rule = {
 			tel: {
 				type: 'string',
@@ -198,14 +198,19 @@ class CartController extends Controller {
 		};
 
 		//验证请求中参数
-		const validateErrors = parameter.validate(rule, this.ctx.params);
+		const validateErrors = parameter.validate(rule, this.ctx.body);
 		console.log(validateErrors)
 
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
-			let params = this.ctx.params;
-			let rs = await this.ctx.service.cart.updateQuantityCartByTelIdBygid(params.telId, params.goodsId);
+			let params = this.ctx.body;
+			//查询原商品的勾选状态
+			let rs_tmp = await this.ctx.service.cart.searchCartByTelldByGoodsld(params.telId, params.goodsId);
+
+			let newState = rs_tmp && rs_tmp.state != null ? !rs_tmp.state : 0; //默认设置为0
+			let rs = await this.ctx.service.cart.updateState(params.telId, params.goodsId, newState);
+
 			this.ctx.body = rs;
 		}
 	}
