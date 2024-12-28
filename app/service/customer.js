@@ -1,69 +1,112 @@
-//1.导入Service对象
 'use strict';
 const Service = require('egg').Service;
 
-//2.自定义类 继承 Service
-//CustomerService 此类处理 Customer对应的业务逻辑 和访问数据库的增删改查
+// 自定义类 继承 Service
+// CustomerService 此类处理 Customer 对应的业务逻辑 和访问数据库的增删改查
 class CustomerService extends Service {
-	//4.写自定义函数
+
 	async selectCustByTelAndPwd(tel, pwd) {
 		let rs;
 		try {
-			//console.log(this.app.mysql)
+			// // 强制转为字符串类型
+			// const telStr = String(tel);
+			// const pwdStr = String(pwd);
+
 			rs = await this.app.mysql.select("customer", {
 				where: {
 					telId: tel,
-					password:pwd
-				}, // WHERE 条件
-				columns: ['telId', 'customerName',"remarks"], // 要查询的字段
-				limit: 1, // 返回数据量
-				offset: 0, // 数据偏移量
-			})
+					password: pwd,
+				},
+				columns: ['telId', 'customerName', 'remarks'],
+				limit: 1,
+				offset: 0,
+			});
 			return rs;
 		} catch (e) {
-			console.log(e)
-			return null
+			console.log('Error:', e);
+			return null;
 		}
 	}
 
+	// 通过手机号查询用户
 	async selectCustByTel(tel) {
-
-	}
-
-
-	async selectCustByNickname(uname) {
-
-	}
-
-
-	//新增用户
-	//customer  {
-	// 	telId:"18971239012",
-	// 	customerName:"sam",
-	// 	password:"111111"
-	// }
-	async addCustomer(cust) {
-		let result = false;
+		let rs;
 		try {
+			// 查询手机号是否已注册
+			rs = await this.app.mysql.select("customer", {
+				where: { telId: tel },
+				columns: ['telId', 'customerName', 'remarks'],
+				limit: 1,
+			});
+			return rs;
+		} catch (e) {
+			console.log(e);
+			return null;
+		}
+	}
 
-			result= await this.app.mysql.insert("customer",cust)
-			// let result = await this.app.mysql.insert("customer", {
-			// 	telId: cust.tel,
-			// 	customerName: cust.uname,
-			// 	password: cust.pwd,
-			// 	remarks:cust.remarks
-			// })
+	// 添加用户到数据库
+	async addCustomer(cust) {
+		const { tel, customerName, password, remarks } = cust;
+		let rs;
+
+		console.log('新增用户信息:');
+		console.log(cust);
+		try {
+			// 检查手机号是否已经注册
+			const existingCustomer = await this.selectCustByTel(tel);
+			if (existingCustomer && existingCustomer.length > 0) {
+				return { success: false, message: "该手机号已被注册" };
+			}
+
+			// 插入
+			const result = await this.app.mysql.insert('customer', {
+				telId: tel,
+				customerName: customerName,
+				password: password,
+				remarks: remarks || '',  // 备注字段可选
+			});
+			if (result.affectedRows === 1) {
+				return { success: true, message: "注册成功" };
+			} else {
+				return { success: false, message: "注册失败，请稍后重试" };
+			}
 
 		} catch (e) {
-			console.log(e)
-			return false;
+			console.log(e);
+			return { success: false, message: "数据库操作失败" };
 		}
-		return result.affectedRows === 1;
 	}
 
+	// 更新用户信息
+	async updateCustomer(cust) {
+		let result = false;
+		try {
+			// 更新用户信息
+			result = await this.app.mysql.update("customer", cust, {
+				where: { telId: cust.telId }, // 根据手机号查找对应用户
+			});
+		} catch (e) {
+			console.log(e);
+			return false; // 更新失败返回 false
+		}
+		return result.affectedRows === 1; // 判断是否更新成功
+	}
 
+	// 删除用户
+	async deleteCustomer(tel) {
+		let result = false;
+		try {
+			// 根据手机号删除用户
+			result = await this.app.mysql.delete("customer", { telId: tel });
+		} catch (e) {
+			console.log(e);
+			return false; // 删除失败返回 false
+		}
+		return result.affectedRows === 1; // 判断是否删除成功
+	}
 
 }
 
-//3.导出类
+// 导出 CustomerService 类
 module.exports = CustomerService;
