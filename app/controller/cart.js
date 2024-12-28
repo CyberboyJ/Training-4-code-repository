@@ -152,7 +152,7 @@ class CartController extends Controller {
 	}
 
 	//根据客户手机号码查询购物车中有多少种商品
-	async selectCartCountByTelId() {
+	async selectCartCountByTelId() { //pass test
 		console.log(this.ctx.params);
 		const rule = {
 			tel: {
