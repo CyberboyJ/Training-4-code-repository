@@ -41,5 +41,4 @@ module.exports = app => {
   router.get('/order-details', controller.orderDetail.selectOrderdetailsByOrderId);
 
 
-
 };
