@@ -3,20 +3,33 @@
 const { Controller } = require('egg');
 
 class OrderDetailController extends Controller {
-
+  // 根据订单编号查询订单明细信息并关联商品信息
   async selectOrderdetailsByOrderId() {
-    console.log(this.ctx.params.orderId);
-    const rule = {  //参数检验
-      orderId: { type: 'string', required: true, message: "请输入正确的订单编号" }
-    };
-    const validateErrors = parameter.validate(rule, this.ctx.params.orderId);
-    console.log(validateErrors)
+    const { ctx, service } = this;
+    const { orderId } = ctx.query;  // 从查询参数中获取订单编号
 
-    if (validateErrors) {
-      this.ctx.body = validateErrors
-    } else {
-      let rs = await this.ctx.service.order.selectOrderdetailsByOrderId(this.ctx.params.orderId);
-      this.ctx.body = rs;
+    if (!orderId) {
+      ctx.throw(400, 'Order ID is required');  // 如果没有传递订单编号，返回错误
+    }
+
+    try {
+      // 调用 service 层的方法获取订单明细
+      const orderDetails = await service.orderDetail.selectOrderdetailsByOrderId(orderId);
+
+      // 返回结果
+      ctx.body = {
+        code: 0,
+        message: 'success',
+        data: orderDetails,
+      };
+    } catch (err) {
+      // 错误处理
+      ctx.body = {
+        code: 500,
+        message: '查询失败',
+        error: err.message,
+      };
+
     }
   }
 }

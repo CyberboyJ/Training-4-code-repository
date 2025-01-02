@@ -58,11 +58,7 @@ class CustomerController extends Controller {
 			let params = this.ctx.request.body;
 			let rs = await this.ctx.service.customer.addCustomer(params);
 			this.ctx.body = rs;
-			// if (rs.success) {
-			// 	this.ctx.body = { result: true, message: rs.message };
-			// } else {
-			// 	this.ctx.body = { result: false, message: rs.message };
-			// }
+
 		}
 	}
 
@@ -94,6 +90,8 @@ class CustomerController extends Controller {
 				message: "密码格式错误"
 			}
 		};
+
+
 		// 验证请求中的参数是否符合规则
 		const validateErrors = parameter.validate(rule, this.ctx.request.body);
 		console.log(validateErrors)
@@ -105,14 +103,7 @@ class CustomerController extends Controller {
 			let params = this.ctx.request.body;
 			let rs = await this.ctx.service.customer.selectCustByTelAndPwd(params.tel, params.pwd);
 			this.ctx.body = rs;
-			// 如果登录成功
-			// if (rs && rs.length > 0) {
-			// 	// rs长度大于0表示查询到用户
-			// 	this.ctx.body = { result: true, message: "登录成功", user: rs[0] };
-			// } else {
-			// 	// 登录失败
-			// 	this.ctx.body = { result: false, message: "用户名或密码错误" };
-			// }
+			console.log("当前登录的用户信息：" + this.ctx.body);
 		}
 	}
 

@@ -10,36 +10,35 @@ module.exports = app => {
 
   //goods
   router.get("/goods/list", controller.goods.list);
-  router.get("/goods/getGroup", controller.goods.getGoodsByGroupId);
-  router.get("/goods/selectGoodsById/:gid", controller.goods.getByGoodId);
+  router.post("/selectGoodsByGoodsTypeId", controller.goods.getGoodsByGroupId);
+  router.post("/selectGoodsById", controller.goods.getByGoodId);
   //goodtypes
-  router.get('/selectGoodsTypeAll', controller.goodsType.listAllType);
+  router.post('/selectGoodsTypeAll', controller.goodsType.listAllType);
   router.get('/selectGoodsTypeAllByPC', controller.goodsType.selectGoodsTypeAllByPC);
 
   //customer
   router.get("/cust/register", controller.customer.registerPage)
   router.post("/cust/register", controller.customer.register)
   router.get('/cust/login', controller.customer.loginPage);
-  router.post('/cust/login', controller.customer.login);
+  router.post('/selectCustByTelAndPwd', controller.customer.login);
 
 
   //adress
   router.get('/address', controller.address.getAddress);
 
   //cart
-  router.post('/cart/new',controller.cart.insertCart);
-  router.get('/cart/query/:tel',controller.cart.selectCartByTelId);
-  router.get('/cart/count/:tel',controller.cart.selectCartCountByTelId);
-  router.put('/cart/updateCart',controller.cart.updateQuantityCart);
-  router.put('/cart/check',controller.cart.updateCartState);
-  router.delete('/cart/delete',controller.cart.deleteCartByTelIdByGoodsId);
-  router.get('/cart/query',controller.cart.selectCartByTelldByGoodsld);
-
-
+  router.post('/insertCart', controller.cart.insertCart);
+  router.post('/selectCartByTelId', controller.cart.selectCartByTelId);
+  router.post('/selectCartCountByTelId', controller.cart.selectCartCountByTelId);
+  router.post('/updateQuantityCart', controller.cart.updateQuantityCart);
+  router.post('/updateCartState', controller.cart.updateCartState);
+  router.post('/deleteCartByTeIdByGoodsId', controller.cart.deleteCartByTelIdByGoodsId);
+  router.post('/searchCartByTelIdByGoodsId', controller.cart.searchCartByTelIdByGoodsId);
   //order
   router.post('/createOrder', controller.order.creartOrder);
   router.get('/orders/:gid', controller.order.QueryOrderById);
-
   //orderDetail
   router.get('/order-details', controller.orderDetail.selectOrderdetailsByOrderId);
+
+
 };

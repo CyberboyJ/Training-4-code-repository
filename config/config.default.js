@@ -41,6 +41,13 @@ module.exports = appInfo => {
     }
   }
 
+  // 配置 CORS（跨域资源共享）
+  config.cors = {
+    origin: '*',  // 允许所有来源的请求
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],  // 允许的请求方法
+  };
+
+
   return {
     ...config,
     ...userConfig,
