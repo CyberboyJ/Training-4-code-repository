@@ -25,8 +25,8 @@ module.exports = appInfo => {
   };
   config.security = {
     csrf: {
-       enable: false,
-  	  // whiteList:['localhost:7001', 'sub2.test.com']
+      enable: false,
+      // whiteList:['localhost:7001', 'sub2.test.com']
     }
   }
   //配置数据库连接
@@ -36,10 +36,17 @@ module.exports = appInfo => {
       host: 'localhost',
       port: '3306',
       user: 'root',
-      password: '7252',
-      database: 'im'
+      password: '248828',
+      database: 'mi'
     }
   }
+
+  // 配置 CORS（跨域资源共享）
+  config.cors = {
+    origin: '*',  // 允许所有来源的请求
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],  // 允许的请求方法
+  };
+
 
   return {
     ...config,

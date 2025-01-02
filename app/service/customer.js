@@ -38,7 +38,8 @@ class CustomerService extends Service {
 				columns: ['telId', 'customerName', 'remarks'],
 				limit: 1,
 			});
-			return rs;
+			console.log("找到的用户信息：" + rs[0]);
+			return rs[0];
 		} catch (e) {
 			console.log(e);
 			return null;
