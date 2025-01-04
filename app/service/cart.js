@@ -17,7 +17,7 @@ class CartService extends Service {
             console.log(error);
 
         }
-        return rs;
+        return rs > 0;
     }
 
     // 根据电话和商品编号查询商品信息
@@ -66,13 +66,13 @@ class CartService extends Service {
         console.log(cart);
         let rs;
         try {
-            const flag = await this.app.mysql.select("cart",{where:{telId:cart.tel,goodsId:cart.goodsId}});
+            const flag = await this.app.mysql.select("cart",{where:{telId:cart.telId,goodsId:cart.goodsId}});
             if(flag.length!=0)
             {
                 console.log("here 2");
                 console.log(flag);
                 let newQuantity =flag[0].quantity+cart.quantity;
-                rs = await this.app.mysql.update("cart",{quantity:newQuantity},{where:{telId: cart.tel, goodsId: cart.goodsId}})
+                rs = await this.app.mysql.update("cart",{quantity:newQuantity},{where:{telId: cart.telId, goodsId: cart.goodsId}})
                 return rs.affectedRows > 0;
             }else
             {
@@ -80,7 +80,7 @@ class CartService extends Service {
                 rs =await this.app.mysql.insert("cart", {
                     cartId: cartNo,
                     goodsId: cart.goodsId,
-                    telId: cart.tel,
+                    telId: cart.telId,
                     quantity: cart.quantity,
                     state: 0
                 })
@@ -96,8 +96,8 @@ class CartService extends Service {
     //更新商品数量
     async updateQuantityCartByTelIdBygid(params) {
         let rs;
-        console.log("in the function "+ cart);
-        console.log(cart);
+        // console.log("in the function "+ cart);
+        // console.log(cart);
         try {
             rs = await this.app.mysql.query(
                 'UPDATE cart SET quantity = quantity + 1 WHERE telId = ? AND goodsId = ?',
@@ -153,10 +153,10 @@ class CartService extends Service {
     }
 
     //删除
-    async deleteByGidByTelID(goodId, telId) {
+    async deleteByGidByTelID(telId, goodsId) {
         let rs;
         try {
-            rs = await this.app.mysql.delete("cart", { where: { telId: telId, goodsId: goodId } });
+            rs = await this.app.mysql.delete("cart", {telId: telId, goodsId: goodsId });
         } catch (error) {
             console.log(error);
         }
