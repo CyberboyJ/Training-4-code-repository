@@ -56,7 +56,7 @@ class GoodsController extends Controller {
 
 		// 	this.ctx.body = await this.ctx.service.goods.getByGid(this.ctx.params.gid);
 		// }
-		const goodsId = this.ctx.request.body.goodsId;  // 从请求体中获取商品 ID
+		const goodsId = this.ctx.request.query.goodsId;  // 从请求体中获取商品 ID
 		const goods = await this.ctx.service.goods.getByGid(goodsId);  // 查询商品信息
 		this.ctx.body = goods;  // 返回商品信息
 

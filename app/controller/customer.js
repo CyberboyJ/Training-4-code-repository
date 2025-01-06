@@ -93,14 +93,14 @@ class CustomerController extends Controller {
 
 
 		// 验证请求中的参数是否符合规则
-		const validateErrors = parameter.validate(rule, this.ctx.request.body);
+		const validateErrors = parameter.validate(rule, this.ctx.request.query);
 		console.log(validateErrors)
 
 		// 如果参数验证失败
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
-			let params = this.ctx.request.body;
+			let params = this.ctx.request.query;
 			let rs = await this.ctx.service.customer.selectCustByTelAndPwd(params.tel, params.pwd);
 			this.ctx.body = rs;
 			console.log("当前登录的用户信息：" + this.ctx.body);
