@@ -10,10 +10,11 @@ module.exports = app => {
 
   //goods
   router.get("/goods/list", controller.goods.list);
-  router.post("/selectGoodsByGoodsTypeId", controller.goods.getGoodsByGroupId);
-  router.post("/selectGoodsById", controller.goods.getByGoodId);
+  router.get("/selectGoodsByGoodsTypeId", controller.goods.getGoodsByGroupId);
+  router.get("/selectGoodsById", controller.goods.getByGoodId);
+
   //goodtypes
-  router.post('/selectGoodsTypeAll', controller.goodsType.listAllType);
+  router.get('/selectGoodsTypeAll', controller.goodsType.listAllType);
   router.get('/selectGoodsTypeAllByPC', controller.goodsType.selectGoodsTypeAllByPC);
 
   //customer
@@ -27,19 +28,18 @@ module.exports = app => {
   router.get('/address', controller.address.getAddress);
 
   //cart
-  router.post('/insertCart', controller.cart.insertCart);
-  router.post('/selectCartByTelId', controller.cart.selectCartByTelId);
-  router.post('/selectCartCountByTelId', controller.cart.selectCartCountByTelId);
-  router.post('/updateQuantityCart', controller.cart.updateQuantityCart);
-  router.post('/updateCartState', controller.cart.updateCartState);
-  router.post('/deleteCartByTeIdByGoodsId', controller.cart.deleteCartByTelIdByGoodsId);
-  router.post('/searchCartByTelIdByGoodsId', controller.cart.searchCartByTelIdByGoodsId);
+  router.post('/insertCart', controller.cart.insertCart); //check
+  router.get('/selectCartByTelId/:telId', controller.cart.selectCartByTelId);
+  router.get('/selectCartCountByTelId', controller.cart.selectCartCountByTelId); //你们到底用哪一个
+  router.put('/updateQuantityCart', controller.cart.updateQuantityCart); // check
+  router.put('/updateCartState', controller.cart.updateCartState); //checked
+  router.delete('/deleteCartByTeIdByGoodsId', controller.cart.deleteCartByTelIdByGoodsId);
+  router.get('/searchCartByTelIdByGoodsId', controller.cart.searchCartByTelIdByGoodsId); //checked
   //order
   router.post('/createOrder', controller.order.creartOrder);
   router.get('/orders/:gid', controller.order.QueryOrderById);
   //orderDetail
   router.get('/order-details', controller.orderDetail.selectOrderdetailsByOrderId);
-
 
 
 };

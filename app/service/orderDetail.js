@@ -9,7 +9,9 @@ class OrderDetailService extends Service {
 
     try {
       // 使用 SELECT 查询连接查询订单明细表和商品表
+
       const result = await app.mysql.select('orderdetails', {
+
         // where 子句指定查询条件
         where: { orderId },
         // 使用 JOIN 查询商品信息
@@ -22,7 +24,9 @@ class OrderDetailService extends Service {
         },
       });
 
+
       return result; // 返回查询结果
+
     } catch (err) {
       throw new Error('Failed to fetch order details: ' + err.message);
     }
@@ -30,4 +34,6 @@ class OrderDetailService extends Service {
 
 }
 
+
 module.exports = OrderDetailService;
+

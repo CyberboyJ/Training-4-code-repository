@@ -9,7 +9,7 @@ class AddressController extends Controller { // pass test
         // console.log("test get Address");
         console.log(this.ctx.request.body);
 		const rule = {
-			tel: { type: 'string', required: true ,message:"请输入正确的手机号码"},
+			telId: { type: 'string', required: true ,message:"请输入正确的手机号码"},
             default:{type:'string',required:true,message:"请输入正确的类型"}
 		};  
 		
@@ -25,7 +25,7 @@ class AddressController extends Controller { // pass test
         //     tel:
         //     default:
         // }
-        const rs= await this.ctx.service.address.selectAddressByTelAndDefault(this.ctx.request.body.tel,this.ctx.request.body.default);
+        const rs= await this.ctx.service.address.selectAddressByTelAndDefault(this.ctx.request.body.telId,this.ctx.request.body.default);
         this.ctx.body=rs
         }
     }

@@ -7,6 +7,7 @@ const Service = require('egg').Service;
 class CartService extends Service {
     //4.写自定义函数
     //根据电话和商品编号查询商品是否存在
+
     async findExistByTelIdByGoodsId(telId, goodId) {
         console.log("findExistByTelIdByGoodsId 参数:" + "电话：" + telId + " gid：" + goodId);
         let rs;
@@ -14,8 +15,9 @@ class CartService extends Service {
             rs = await this.app.mysql.count("cart", { telId: telId, goodsId: goodId });
         } catch (error) {
             console.log(error);
+
         }
-        return rs;
+        return rs > 0;
     }
 
     // 根据电话和商品编号查询商品信息
@@ -38,8 +40,8 @@ class CartService extends Service {
         return rs;
     }
 
-    //插入新商品记录
-    async newCartMessage(cart) {
+    // 根据电话和商品编号查询商品信息
+    async searchCartByTelldByGoodsld(tel, gid) {
         let rs;
         try {
             let cartNo = this.createNo();
@@ -57,38 +59,76 @@ class CartService extends Service {
             console.log(error);
         }
         return rs;
+    }
 
+    //插入新商品记录
+    async newCartMessage(cart) {
+        console.log(cart);
+        let rs;
+        try {
+            const flag = await this.app.mysql.select("cart",{where:{telId:cart.telId,goodsId:cart.goodsId}});
+            if(flag.length!=0)
+            {
+                console.log("here 2");
+                console.log(flag);
+                let newQuantity =flag[0].quantity+cart.quantity;
+                rs = await this.app.mysql.update("cart",{quantity:newQuantity},{where:{telId: cart.telId, goodsId: cart.goodsId}})
+                return rs.affectedRows > 0;
+            }else
+            {
+                let cartNo = await this.createNo();
+                rs =await this.app.mysql.insert("cart", {
+                    cartId: cartNo,
+                    goodsId: cart.goodsId,
+                    telId: cart.telId,
+                    quantity: cart.quantity,
+                    state: 0
+                })
+                console.log(rs);
+                return rs.affectedRows > 0;
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     }
 
     //更新商品数量
     async updateQuantityCartByTelIdBygid(params) {
         let rs;
+        // console.log("in the function "+ cart);
+        // console.log(cart);
         try {
             rs = await this.app.mysql.query(
                 'UPDATE cart SET quantity = quantity + 1 WHERE telId = ? AND goodsId = ?',
                 [params.telId, params.goodsId]
             )
+
         } catch (error) {
             console.log(error);
         }
-        return rs;
+        return rs.affectedRows > 0;
     }
 
     //关联查询，商品信息
     async QueryByTelId(telId) {
         let rs;
         try {
+
             rs = await this.app.mysql.select("cart", { where: { telId: telId } });
+
         } catch (error) {
             console.log(error);
         }
         return rs;
     }
 
+
     async QueryCountByTelId(telId) {
         let rs;
         try {
             rs = await this.app.mysql.count("cart", { where: { telId: telId } });
+
         } catch (error) {
             console.log(error);
         }
@@ -96,6 +136,7 @@ class CartService extends Service {
     }
 
     //更新勾选状态
+
     async updateState(params) {
         let rs;
         try {
@@ -104,56 +145,34 @@ class CartService extends Service {
                 'UPDATE cart SET state = NOT state WHERE telId = ? AND goodsId = ?',
                 [params.telId, params.goodsId]
             );
+
         } catch (error) {
             console.log(error);
         }
-        return rs;
+        return rs.affectedRows > 0;
     }
 
     //删除
-    async deleteByGidByTelID(goodId, telId) {
+    async deleteByGidByTelID(telId, goodsId) {
         let rs;
         try {
-            rs = await this.app.mysql.delete("cart", { where: { telId: telId, goodsId: goodId } });
+            rs = await this.app.mysql.delete("cart", {telId: telId, goodsId: goodsId });
         } catch (error) {
             console.log(error);
         }
-        return rs;
+        return rs.affectedRows > 0;
     }
 
     //生成订单编号
     async createNo() {
+        let id = 1;
         while (true) {
-            // 1、生成订单编号，并验证编号是否存在
-            let Id = () => {
-                {
-                    let now = new Date();
-                    let year = now.getFullYear();
-                    let month = now.getMonth() + 1;
-                    let day = now.getDate();
-                    month = month < 10 ? "0" + month : month;
-                    day = day < 10 ? "0" + day : day;
-
-                    let hours = now.getHours();
-                    let minutes = now.getMinutes();
-                    let seconds = now.getSeconds();
-                    let ms = now.getMilliseconds();
-                    hours = hours < 10 ? "0" + hours : hours;
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                    return `${year}${month}${day}${hours}${minutes}${seconds}${ms}`
-                }
-            }
-            const oId = Id()
-            const total = await this.app.mysql.count('cart', { cartId: oId });
+            const total = await this.app.mysql.count('cart', { cartId: id });
             if (total == 0)
-                return oId;
+                return id;
+            id = id + 1;
         }
-
-
     }
-
 }
 
 //3.导出类
