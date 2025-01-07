@@ -26,7 +26,7 @@ class GoodsController extends Controller {
 		const { ctx } = this;
 
 		// 获取请求中的 goodsTypeId（前端会传递这个参数）
-		const goodsTypeId = ctx.request.body.goodsTypeId;
+		const goodsTypeId = ctx.request.query.goodsTypeId;
 		console.log("Received goodsTypeId:", goodsTypeId); // 打印接收到的商品类型ID
 
 		if (!goodsTypeId) {
