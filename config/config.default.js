@@ -36,8 +36,8 @@ module.exports = appInfo => {
       host: 'localhost',
       port: '3306',
       user: 'root',
-      password: '7252',
-      database: 'im'
+      password: '248828',
+      database: 'mi'
     }
   }
 
