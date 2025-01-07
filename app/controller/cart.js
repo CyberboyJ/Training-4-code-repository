@@ -151,7 +151,7 @@ class CartController extends Controller {
 		console.log("start");
 		console.log(this.ctx.params);
 		const rule = {
-			telId: { type: 'int', required: true, message: "请输入正确的手机号码" }
+			telId: { type: 'string', required: true, message: "请输入正确的手机号码" }
 		};
 
 		//验证请求中参数
