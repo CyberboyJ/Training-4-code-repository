@@ -66,6 +66,7 @@ class CartService extends Service {
         console.log(cart);
         let rs;
         try {
+<<<<<<< HEAD
             const flag = await this.app.mysql.select("cart", { where: { telId: cart.telId, goodsId: cart.goodsId } });
             if (flag.length != 0) {
                 console.log("here 2");
@@ -79,6 +80,23 @@ class CartService extends Service {
                     cartId: cartNo,
                     goodsId: cart.goodsId,
                     telId: cart.telId,
+=======
+            const flag = await this.app.mysql.select("cart",{where:{telId:cart.tel,goodsId:cart.goodsId}});
+            if(flag.length!=0)
+            {
+                console.log("here 2");
+                console.log(flag);
+                let newQuantity =flag[0].quantity+cart.quantity;
+                rs = await this.app.mysql.update("cart",{quantity:newQuantity},{where:{telId: cart.tel, goodsId: cart.goodsId}})
+                return rs.affectedRows > 0;
+            }else
+            {
+                let cartNo = await this.createNo();
+                rs =await this.app.mysql.insert("cart", {
+                    cartId: cartNo,
+                    goodsId: cart.goodsId,
+                    telId: cart.tel,
+>>>>>>> 4bbef7e681dd28e73d6ec79c963be64740746a9b
                     quantity: cart.quantity,
                     state: 0
                 })
@@ -94,8 +112,13 @@ class CartService extends Service {
     //更新商品数量
     async updateQuantityCartByTelIdBygid(params) {
         let rs;
+<<<<<<< HEAD
         // console.log("in the function "+ cart);
         // console.log(cart);
+=======
+        console.log("in the function "+ cart);
+        console.log(cart);
+>>>>>>> 4bbef7e681dd28e73d6ec79c963be64740746a9b
         try {
             rs = await this.app.mysql.query(
                 'UPDATE cart SET quantity = quantity + ? WHERE telId = ? AND goodsId = ?',
@@ -127,8 +150,12 @@ class CartService extends Service {
     async QueryCountByTelId(telId) {
         let rs;
         try {
+<<<<<<< HEAD
             //这里出现了报错，删掉了括号里的where
             rs = await this.app.mysql.count("cart", { telId: telId });
+=======
+            rs = await this.app.mysql.count("cart", { where: { telId: telId } });
+>>>>>>> 4bbef7e681dd28e73d6ec79c963be64740746a9b
 
         } catch (error) {
             console.log(error);
