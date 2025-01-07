@@ -26,8 +26,6 @@ class GoodsController extends Controller {
 		const { ctx } = this;
 
 		// 获取请求中的 goodsTypeId（前端会传递这个参数）
-		console.log("query：")
-		console.log(ctx.request.query)
 		const goodsTypeId = ctx.request.query.goodsTypeId;
 		console.log("Received goodsTypeId:", goodsTypeId); // 打印接收到的商品类型ID
 
@@ -58,8 +56,6 @@ class GoodsController extends Controller {
 
 		// 	this.ctx.body = await this.ctx.service.goods.getByGid(this.ctx.params.gid);
 		// }
-		console.log("query：");
-		console.log(this.ctx.request.query)
 		const goodsId = this.ctx.request.query.goodsId;  // 从请求体中获取商品 ID
 		const goods = await this.ctx.service.goods.getByGid(goodsId);  // 查询商品信息
 		this.ctx.body = goods;  // 返回商品信息

@@ -66,18 +66,16 @@ class CartService extends Service {
         console.log(cart);
         let rs;
         try {
-            const flag = await this.app.mysql.select("cart",{where:{telId:cart.telId,goodsId:cart.goodsId}});
-            if(flag.length!=0)
-            {
+            const flag = await this.app.mysql.select("cart", { where: { telId: cart.telId, goodsId: cart.goodsId } });
+            if (flag.length != 0) {
                 console.log("here 2");
                 console.log(flag);
-                let newQuantity =flag[0].quantity+cart.quantity;
-                rs = await this.app.mysql.update("cart",{quantity:newQuantity},{where:{telId: cart.telId, goodsId: cart.goodsId}})
+                let newQuantity = flag[0].quantity + cart.quantity;
+                rs = await this.app.mysql.update("cart", { quantity: newQuantity }, { where: { telId: cart.telId, goodsId: cart.goodsId } })
                 return rs.affectedRows > 0;
-            }else
-            {
+            } else {
                 let cartNo = await this.createNo();
-                rs =await this.app.mysql.insert("cart", {
+                rs = await this.app.mysql.insert("cart", {
                     cartId: cartNo,
                     goodsId: cart.goodsId,
                     telId: cart.telId,
@@ -100,8 +98,10 @@ class CartService extends Service {
         // console.log(cart);
         try {
             rs = await this.app.mysql.query(
-                'UPDATE cart SET quantity = quantity + 1 WHERE telId = ? AND goodsId = ?',
-                [params.telId, params.goodsId]
+                'UPDATE cart SET quantity = quantity + ? WHERE telId = ? AND goodsId = ?',
+                //这里原来写的是[quantity = quantity +1](1.6修改)
+                [params.quantity, params.telId, params.goodsId]
+                //[params.telId, params.goodsId]
             )
 
         } catch (error) {
@@ -127,7 +127,8 @@ class CartService extends Service {
     async QueryCountByTelId(telId) {
         let rs;
         try {
-            rs = await this.app.mysql.count("cart", { where: { telId: telId } });
+            //这里出现了报错，删掉了括号里的where
+            rs = await this.app.mysql.count("cart", { telId: telId });
 
         } catch (error) {
             console.log(error);
@@ -156,7 +157,7 @@ class CartService extends Service {
     async deleteByGidByTelID(telId, goodsId) {
         let rs;
         try {
-            rs = await this.app.mysql.delete("cart", {telId: telId, goodsId: goodsId });
+            rs = await this.app.mysql.delete("cart", { telId: telId, goodsId: goodsId });
         } catch (error) {
             console.log(error);
         }

@@ -7,14 +7,14 @@ class AddressController extends Controller { // pass test
   
     async getAddress(){
         // console.log("test get Address");
-        console.log(this.ctx.request.body);
+        console.log(this.ctx.request.query);
 		const rule = {
 			telId: { type: 'string', required: true ,message:"请输入正确的手机号码"},
-            default:{type:'string',required:true,message:"请输入正确的类型"}
+            default:{type:'string', required:true,message:"请输入正确的类型"}
 		};  
 		
 		//验证请求中参数
-		const validateErrors = parameter.validate(rule, this.ctx.request.body);
+		const validateErrors = parameter.validate(rule, this.ctx.request.query);
 		console.log(validateErrors)
 		
 		if(validateErrors){
@@ -25,7 +25,7 @@ class AddressController extends Controller { // pass test
         //     tel:
         //     default:
         // }
-        const rs= await this.ctx.service.address.selectAddressByTelAndDefault(this.ctx.request.body.telId,this.ctx.request.body.default);
+        const rs= await this.ctx.service.address.selectAddressByTelAndDefault(this.ctx.request.query.telId,this.ctx.request.query.default);
         this.ctx.body=rs
         }
     }

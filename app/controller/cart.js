@@ -8,7 +8,7 @@ class CartController extends Controller {
 
 	//根据客户手机号码和商品编号查询购物车中是否已经存在此商品
 	async searchCartByTelIdByGoodsId() {
-		console.log(this.ctx.request.body);
+		console.log(this.ctx.request.query);
 		const rule = {
 			telId: {
 				type: 'string',
@@ -27,14 +27,14 @@ class CartController extends Controller {
 
 
 		//验证请求中参数
-		const validateErrors = parameter.validate(rule, this.ctx.request.body);
+		const validateErrors = parameter.validate(rule, this.ctx.request.query);
 		console.log(validateErrors)
 
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
 
-			let params = this.ctx.request.body;
+			let params = this.ctx.request.query;
 			console.log("电话：" + params.telId + " 商品ID：" + params.goodsId);
 			let rs = await this.ctx.service.cart.findExistByTelIdByGoodsId(params.telId, parseInt(params.goodsId));
 
@@ -147,7 +147,7 @@ class CartController extends Controller {
 	}
 
 	//根据客户手机号码查询购物车信息
-	async selectCartByTelId() { 
+	async selectCartByTelId() {
 		console.log("start");
 		console.log(this.ctx.params);
 		const rule = {
@@ -162,7 +162,7 @@ class CartController extends Controller {
 			this.ctx.body = validateErrors
 		} else {
 			let params = this.ctx.params.telId;
-			console.log("test2 "+params);
+			console.log("test2 " + params);
 			console.log("test");
 			let rs = await this.ctx.service.cart.QueryByTelId(params);
 			this.ctx.body = rs;
@@ -171,7 +171,7 @@ class CartController extends Controller {
 
 	//根据客户手机号码查询购物车中有多少种商品
 	async selectCartCountByTelId() { // pass test  //你们到底用哪一个？
-		console.log(this.ctx.params);
+		console.log(this.ctx.request.query);
 		const rule = {
 			telId: {
 				type: 'string',
@@ -184,13 +184,13 @@ class CartController extends Controller {
 		};
 
 		//验证请求中参数
-		const validateErrors = parameter.validate(rule, this.ctx.params);
+		const validateErrors = parameter.validate(rule, this.ctx.request.query);
 		console.log(validateErrors)
 
 		if (validateErrors) {
 			this.ctx.body = validateErrors
 		} else {
-			let params = this.ctx.params.tel;
+			let params = this.ctx.request.query.tel;
 			let rs = await this.ctx.service.cart.QueryCountByTelId(params);
 			this.ctx.body = rs;
 		}
