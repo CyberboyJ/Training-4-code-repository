@@ -157,7 +157,6 @@ class CartService extends Service {
         let rs;
         try {
             rs = await this.app.mysql.delete("cart", { telId: telId, goodsId: goodsId });
-            rs = await this.app.mysql.delete("cart", { telId: telId, goodsId: goodsId });
         } catch (error) {
             console.log(error);
         }
