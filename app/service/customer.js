@@ -5,16 +5,16 @@ const Service = require('egg').Service;
 // CustomerService 此类处理 Customer 对应的业务逻辑 和访问数据库的增删改查
 class CustomerService extends Service {
 
-	async selectCustByTelAndPwd(tel, pwd) {
+	async selectCustByTelAndPwd(telId, pwd) {
 		let rs;
 		try {
 			// // 强制转为字符串类型
-			// const telStr = String(tel);
+			// const telStr = String(telId);
 			// const pwdStr = String(pwd);
 
 			rs = await this.app.mysql.select("customer", {
 				where: {
-					telId: tel,
+					telId: telId,
 					password: pwd,
 				},
 				columns: ['telId', 'customerName', 'remarks'],
@@ -29,12 +29,12 @@ class CustomerService extends Service {
 	}
 
 	// 通过手机号查询用户
-	async selectCustByTel(tel) {
+	async selectCustByTel(telId) {
 		let rs;
 		try {
 			// 查询手机号是否已注册
 			rs = await this.app.mysql.select("customer", {
-				where: { telId: tel },
+				where: { telId: telId },
 				columns: ['telId', 'customerName', 'remarks'],
 				limit: 1,
 			});
@@ -48,21 +48,21 @@ class CustomerService extends Service {
 
 	// 添加用户到数据库
 	async addCustomer(cust) {
-		const { tel, customerName, password, remarks } = cust;
+		const { telId, customerName, password, remarks } = cust;
 		let rs;
-
+		console.log('数据库连接状态:', this.app.mysql);
 		console.log('新增用户信息:');
 		console.log(cust);
 		try {
 			// 检查手机号是否已经注册
-			const existingCustomer = await this.selectCustByTel(tel);
+			const existingCustomer = await this.selectCustByTel(telId);
 			if (existingCustomer && existingCustomer.length > 0) {
 				return { success: false, message: "该手机号已被注册" };
 			}
 
 			// 插入
 			const result = await this.app.mysql.insert('customer', {
-				telId: tel,
+				telId: telId,
 				customerName: customerName,
 				password: password,
 				remarks: remarks || '',  // 备注字段可选
@@ -95,11 +95,11 @@ class CustomerService extends Service {
 	}
 
 	// 删除用户
-	async deleteCustomer(tel) {
+	async deleteCustomer(telId) {
 		let result = false;
 		try {
 			// 根据手机号删除用户
-			result = await this.app.mysql.delete("customer", { telId: tel });
+			result = await this.app.mysql.delete("customer", { telId: telId });
 		} catch (e) {
 			console.log(e);
 			return false; // 删除失败返回 false

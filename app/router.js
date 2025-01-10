@@ -18,9 +18,8 @@ module.exports = app => {
   router.get('/selectGoodsTypeAllByPC', controller.goodsType.selectGoodsTypeAllByPC);
 
   //customer
-  router.get("/cust/register", controller.customer.registerPage)
   router.post("/cust/register", controller.customer.register)
-  router.get('/cust/login', controller.customer.loginPage);
+  router.post('/cust/wx-login', controller.customer.wxLogin);
   router.get('/selectCustByTelAndPwd', controller.customer.login);
 
 
